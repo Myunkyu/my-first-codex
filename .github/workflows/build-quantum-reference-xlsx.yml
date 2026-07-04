@@ -1,0 +1,43 @@
+name: Build quantum reference XLSX
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'artifacts/quantum_reference_database_20260704.xml'
+      - 'scripts/convert_spreadsheetml_to_xlsx.py'
+      - '.github/workflows/build-quantum-reference-xlsx.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install openpyxl
+
+      - name: Build XLSX
+        run: python scripts/convert_spreadsheetml_to_xlsx.py
+
+      - name: Commit XLSX
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add 'artifacts/양자분야_시장기술정책표준화_참고자료_DB_20260704.xlsx'
+          if git diff --cached --quiet; then
+            echo 'No changes to commit'
+          else
+            git commit -m 'Build quantum reference XLSX workbook'
+            git push
+          fi
