@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'scripts/build_quantum_chapter2_methodology_docx.py'
+      - 'scripts/run_quantum_chapter2_builder.py'
       - '.github/workflows/build-quantum-chapter2-docx.yml'
   workflow_dispatch:
 
@@ -33,7 +34,7 @@ jobs:
         run: pip install python-docx matplotlib pillow
 
       - name: Build DOCX
-        run: python scripts/build_quantum_chapter2_methodology_docx.py
+        run: python scripts/run_quantum_chapter2_builder.py
 
       - name: Commit DOCX
         run: |
