@@ -17,6 +17,10 @@ source = source.replace('sec.right_margin = Cm(1.65)', 'sec.right_margin = Cm(1.
 # Matplotlib requires #-prefixed hex colors, while Word XML requires bare hex.
 # Patch matplotlib-only keyword arguments before executing the source.
 source = re.sub(r'(facecolor|edgecolor)=([A-Z_]+)', r'\1="#" + \2', source)
+source = source.replace('facecolor=fc', 'facecolor="#" + fc')
+source = source.replace('edgecolor=ec', 'edgecolor="#" + ec')
+source = source.replace('facecolor=c', 'facecolor="#" + c')
+source = source.replace('edgecolor=c', 'edgecolor="#" + c')
 source = source.replace('color=GRAY', 'color="#" + GRAY')
 source = source.replace('color=WHITE', 'color="#" + WHITE')
 source = source.replace('color=NAVY', 'color="#" + NAVY')
