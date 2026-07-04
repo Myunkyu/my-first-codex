@@ -30,9 +30,25 @@ jobs:
         run: pip install python-docx matplotlib pillow
 
       - name: Build DOCX
-        run: python scripts/run_quantum_chapter2_builder.py
+        id: build_docx
+        shell: bash
+        run: |
+          set +e
+          python scripts/run_quantum_chapter2_builder.py > artifacts/chapter2_build.log 2>&1
+          status=$?
+          cat artifacts/chapter2_build.log
+          exit $status
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quantum-chapter2-build-log
+          path: artifacts/chapter2_build.log
+          if-no-files-found: warn
 
       - name: Upload DOCX artifact
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: quantum-chapter2-docx
