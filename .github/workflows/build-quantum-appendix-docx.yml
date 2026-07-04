@@ -1,0 +1,44 @@
+name: Build quantum appendix DOCX
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/build_quantum_appendix_report.py'
+      - '.github/workflows/build-quantum-appendix-docx.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Korean fonts
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fonts-noto-cjk
+          fc-cache -f -v
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install python-docx matplotlib numpy pillow
+      - name: Build DOCX
+        run: python scripts/build_quantum_appendix_report.py
+      - name: Commit report and figures
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add 'artifacts/arXiv_양자분야_부록_다양한_분석자료_정리_고품질_20260704.docx'
+          git add artifacts/appendix_assets/*.png
+          if git diff --cached --quiet; then
+            echo 'No changes to commit'
+          else
+            git commit -m 'Build high-quality quantum appendix report'
+            git push
+          fi
