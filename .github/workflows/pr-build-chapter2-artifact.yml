@@ -1,0 +1,40 @@
+name: PR build chapter 2 artifact
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Korean fonts
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fonts-noto-cjk
+          fc-cache -f -v
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install python-docx matplotlib pillow
+
+      - name: Build DOCX
+        run: python scripts/run_quantum_chapter2_builder.py
+
+      - name: Upload DOCX artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: quantum-chapter2-docx
+          path: artifacts/arXiv_양자분야_제2장_분석대상_및_방법론_고품질_재작성_20260704.docx
+          if-no-files-found: error
