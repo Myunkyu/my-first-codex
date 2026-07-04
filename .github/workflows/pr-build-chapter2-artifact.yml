@@ -36,7 +36,6 @@ jobs:
           set +e
           python scripts/run_quantum_chapter2_builder.py > artifacts/chapter2_build.log 2>&1
           status=$?
-          cat artifacts/chapter2_build.log
           exit $status
 
       - name: Upload build log
@@ -54,3 +53,16 @@ jobs:
           name: quantum-chapter2-docx
           path: artifacts/arXiv_양자분야_제2장_분석대상_및_방법론_고품질_재작성_20260704.docx
           if-no-files-found: error
+
+  report-log:
+    needs: build
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download build log
+        uses: actions/download-artifact@v4
+        with:
+          name: quantum-chapter2-build-log
+          path: log
+      - name: Print build log
+        run: cat log/chapter2_build.log
